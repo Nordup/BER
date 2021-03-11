@@ -1,3 +1,6 @@
+# Adaptive communication enviroment
+*/ACE_wrappers/*
+
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
