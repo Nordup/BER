@@ -1,3 +1,9 @@
+# CMake
+cmake-build/
+*/cmake-build/
+build/
+*/build/
+
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
