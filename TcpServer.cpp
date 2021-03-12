@@ -58,6 +58,7 @@ namespace
     };
 
     typedef TCPServerConnectionFactoryImpl<ClientConnection> TCPFactory;
+
 #if defined(POCO_OS_FAMILY_WINDOWS)
     NamedEvent terminator(ProcessImpl::terminationEventName(Process::id()));
 #else

@@ -32,16 +32,9 @@ namespace
     public:
         void connect(const std::string& hostAndPort)
         {
-            //try
-            //{
-                sAddress = SocketAddress(hostAndPort);
-                socket = StreamSocket();
-                socket.connect(sAddress, Poco::Timespan(1l, 0l)); // sets the socket timeout and establishes a connection to the TCP server at the given address.
-            //}
-            //catch(Exception& ex)
-            //{
-                //std::cerr << "Connection: " << ex.displayText() << std::endl;
-            //}
+            sAddress = SocketAddress(hostAndPort);
+            socket = StreamSocket();
+            socket.connect(sAddress, Poco::Timespan(1l, 0l)); // sets the socket timeout and establishes a connection to the TCP server at the given address.
         }
 
         void disconnect()
@@ -84,8 +77,11 @@ int     main(int argc, char** argv)
 
     try
     {
-        client.connect( (std::strcmp(argv[1], "-d") == 0) ? "0.0.0.0:2001" : argv[1] );
+        std::string hostAndPort = (std::strcmp(argv[1], "-d") == 0) ? "0.0.0.0:2001" : argv[1];
+
+        client.connect(hostAndPort);
         std::cout << "Connected to host: " << client.getIpAddress() << std::endl;
+        std::cout << "Press Ctrl-C to quit." << std::endl;
         
         terminator.wait();
     }
