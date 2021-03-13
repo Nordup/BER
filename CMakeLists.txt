@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16.3)
 set(CMAKE_CXX_STANDARD 14)
 
 # project NAME
-project(BER_length_encoding_decoding)
+project(TestBER)
 
 # add the executable
 add_executable(server TcpServer.cpp)

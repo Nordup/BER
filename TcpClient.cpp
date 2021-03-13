@@ -1,10 +1,44 @@
 #include "header.hpp"
 
-namespace
+namespace TestBER
 {
+#if defined(POCO_OS_FAMILY_WINDOWS)
+        NamedEvent terminator(ProcessImpl::terminationEventName(Process::id()));
+#else
+        Event terminator;
+#endif
+
     class TcpClient
     {
     public:
+
+        int run(std::string arg)
+        {
+            try
+            {
+                std::string hostAndPort = (arg == "-d") ? "0.0.0.0:2001" : arg;
+
+                connect(hostAndPort);
+                std::cout << "Connected to host: " << sAddress << std::endl;
+                std::cout << "Press Ctrl-C to quit." << std::endl;
+
+                std::thread th(&TcpClient::receiveDataFromServer, this);
+
+                terminator.wait();
+                disconnect();
+            }
+            catch (Exception& exc)
+            {
+                std::cerr << exc.displayText() << std::endl;
+                return 1;
+            }
+            return 0;
+        }
+
+    private:
+        StreamSocket socket;
+        SocketAddress sAddress;
+
         void connect(const std::string& hostAndPort)
         {
             sAddress = SocketAddress(hostAndPort);
@@ -20,9 +54,9 @@ namespace
         /**
          * Receive data and handle it
          */
-        void run()
+        void receiveDataFromServer()
         {
-            try
+           try
             {
                 char buffer[256];
                 int n = socket.receiveBytes(buffer, sizeof(buffer));
@@ -45,22 +79,7 @@ namespace
         //{
             //socket.sendBytes(msg.c_str(), msg.length(), 0);
         //}
-
-        std::string getIpAddress()
-        {
-            return sAddress.toString();
-        }
-
-    private:
-        StreamSocket socket;
-        SocketAddress sAddress;
     };
-
-#if defined(POCO_OS_FAMILY_WINDOWS)
-        NamedEvent terminator(ProcessImpl::terminationEventName(Process::id()));
-#else
-        Event terminator;
-#endif
 }
 
 int     main(int argc, char** argv)
@@ -72,25 +91,6 @@ int     main(int argc, char** argv)
         return 0;
     }
 
-    try
-    {
-        TcpClient client;
-
-        std::string hostAndPort = (std::strcmp(argv[1], "-d") == 0) ? "0.0.0.0:2001" : argv[1];
-
-        client.connect(hostAndPort);
-        std::cout << "Connected to host: " << client.getIpAddress() << std::endl;
-        std::cout << "Press Ctrl-C to quit." << std::endl;
-
-        std::thread th(&TcpClient::run, client);
-
-        terminator.wait();
-    }
-    catch (Exception& exc)
-    {
-        std::cerr << exc.displayText() << std::endl;
-        return 1;
-    }
-    
-    return 0;
+    TestBER::TcpClient client;
+    return client.run(argv[1]);
 }

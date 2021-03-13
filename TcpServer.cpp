@@ -1,6 +1,6 @@
 #include "header.hpp"
 
-namespace
+namespace TestBER
 {
     class ClientConnection: public TCPServerConnection
     {
@@ -58,13 +58,13 @@ int main(int argc, char** argv)
     {
         Poco::UInt16 port = NumberParser::parse( (std::strcmp(argv[1], "-d") == 0) ? "2001" : argv[1] );
 
-        TCPServer srv(new TCPFactory(), port);
+        TCPServer srv(new TestBER::TCPFactory(), port);
         srv.start();
 
         std::cout << "TCP server listening on port " << port << '.'
             << std::endl << "Press Ctrl-C to quit." << std::endl;
 
-        terminator.wait();
+        TestBER::terminator.wait();
     }
     catch (Exception& exc)
     {
