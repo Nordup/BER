@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16.3)
 set(CMAKE_CXX_STANDARD 14)
 
 # project NAME
-project(BER_length_encoding_decodin)
+project(BER_length_encoding_decoding)
 
 # add the executable
 add_executable(server TcpServer.cpp)
@@ -12,3 +12,6 @@ add_executable(client TcpClient.cpp)
 find_package(Poco REQUIRED Net Util JSON XML)
 target_link_libraries(server PUBLIC Poco::Net Poco::Util Poco::JSON Poco::XML)
 target_link_libraries(client PUBLIC Poco::Net Poco::Util Poco::JSON Poco::XML)
+
+# include header
+include_directories(include/)
