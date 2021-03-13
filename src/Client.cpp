@@ -2,11 +2,11 @@
 
 namespace TestBER
 {
-    class Client
+    class Client: TcpConnection
     {
     public:
 
-        int run(std::string arg)
+        int run(std::string arg) override
         {
             try
             {
@@ -28,6 +28,11 @@ namespace TestBER
             }
 
             return 0;
+        }
+        
+        void sendData(std::string msg) override
+        {
+            socket.sendBytes(msg.c_str(), msg.length(), 0);
         }
 
     private:
@@ -68,11 +73,6 @@ namespace TestBER
             {
                 std::cerr << "ClientConnection: " << exc.displayText() << std::endl;
             }
-        }
-
-        void sendMessage(std::string msg)
-        {
-            socket.sendBytes(msg.c_str(), msg.length(), 0);
         }
     };
 }

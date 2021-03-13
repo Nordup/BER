@@ -14,6 +14,11 @@
 #include <list>
 #include <mutex>
 
+// my classes
+#include "BER.hpp"
+#include "IO.hpp"
+#include "Singleton.hpp"
+
 using Poco::Net::TCPServer;
 using Poco::Net::TCPServerConnectionFilter;
 using Poco::Net::TCPServerConnection;

@@ -71,7 +71,7 @@ namespace TestBER
 
     typedef TCPServerConnectionFactoryImpl<ClientConnection> TCPFactory;
 
-    class Server
+    class Server: TcpConnection
     {
     public:
 
@@ -105,7 +105,7 @@ namespace TestBER
             return 0;
         }
  
-        void sendDataToAll(std::string msg)
+        void sendData(std::string msg) override
         {
             for (auto sSocket: ClientConnection::getClientsSockets())
             {
