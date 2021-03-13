@@ -12,7 +12,6 @@ namespace TestBER
     {
     public:
 
-        ClientConnection();
         ClientConnection(const StreamSocket& s): TCPServerConnection(s) {}
 
         /**
@@ -21,7 +20,6 @@ namespace TestBER
         void run() override
         {
             StreamSocket& ss = socket();
-            // store socket in static list field
             addToStaticList(ss);
 
             try
@@ -45,33 +43,46 @@ namespace TestBER
             removeFromStaticList(ss);
         }
 
-        static std::list<StreamSocket> getClientsSockets()
+        static std::list<StreamSocket>& getClientsSockets()
         {
+            // static list for all ClientConnection objects
+            static std::list<StreamSocket> clientsSockets;
             return clientsSockets;
         }
 
-    private:
-        static std::list<StreamSocket> clientsSockets;
-        static std::mutex mutex;
-
-        static void addToStaticList(StreamSocket& socket)
+        static std::mutex& getMutex()
         {
-            mutex.lock();
-            clientsSockets.push_back(socket);
-            mutex.unlock();
+            // static mutex accessing clientsSockets
+            static std::mutex mutex;
+            return mutex;
         }
 
+    private:
+
+        /**
+         * add StreamSocket to static list for accessing to send data
+         */
+        static void addToStaticList(StreamSocket& socket)
+        {
+            getMutex().lock();
+            getClientsSockets().push_back(socket);
+            getMutex().unlock();
+        }
+
+        /**
+         * remove StreamSocket from static list
+         */
         static void removeFromStaticList(StreamSocket& socket)
         {
-            mutex.lock();
-            clientsSockets.remove(socket);
-            mutex.unlock();
+            getMutex().lock();
+            getClientsSockets().remove(socket);
+            getMutex().unlock();
         }
     };
 
     typedef TCPServerConnectionFactoryImpl<ClientConnection> TCPFactory;
 
-    class Server: TcpConnection
+    class Server: public TcpConnection
     {
     public:
 
@@ -83,14 +94,13 @@ namespace TestBER
 
                 TCPServer srv(new TestBER::TCPFactory(), port);
                 srv.start();
-                //tcpServer = &srv;
 
                 std::cout << "TCP server listening on port " << port << '.'
                     << std::endl << "Press Ctrl-C to quit." << std::endl;
                 
                 while(true)
                 {
-                    sendDataToAll("Hello, client!");
+                    sendData("Hello, client!");
                     sleep(4);
                 }
 
@@ -105,6 +115,9 @@ namespace TestBER
             return 0;
         }
  
+        /**
+         * send data to all clients
+         */
         void sendData(std::string msg) override
         {
             for (auto sSocket: ClientConnection::getClientsSockets())
@@ -119,15 +132,9 @@ namespace TestBER
                 }
             }
         }
-
-   private:
-        //TCPServer *tcpServer; // pointer to stack allocated variable
     };
 }
 
-// store StreamSockets
-std::list<StreamSocket> TestBER::ClientConnection::clientsSockets;
-std::mutex TestBER::ClientConnection::mutex;
 
 int main(int argc, char** argv)
 {
@@ -138,6 +145,9 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    TestBER::Server server;
-    return server.run(argv[1]);
+    TestBER::Singleton::get().connection = new TestBER::Server();
+    TestBER::Singleton::get().input_output = new TestBER::IO();
+
+    return TestBER::Singleton::get().connection->run(argv[1]);
+
 }

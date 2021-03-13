@@ -2,7 +2,7 @@
 
 namespace TestBER
 {
-    class Client: TcpConnection
+    class Client: public TcpConnection
     {
     public:
 
@@ -86,6 +86,8 @@ int     main(int argc, char** argv)
         return 0;
     }
 
-    TestBER::Client client;
-    return client.run(argv[1]);
+    TestBER::Singleton::get().connection = new TestBER::Client();
+    TestBER::Singleton::get().input_output = new TestBER::IO();
+
+    return TestBER::Singleton::get().connection->run(argv[1]);
 }
