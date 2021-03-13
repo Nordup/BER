@@ -14,7 +14,7 @@
 #include <list>
 #include <mutex>
 
-// my classes
+// TestBER classes
 #include "BER.hpp"
 #include "IO.hpp"
 #include "Singleton.hpp"

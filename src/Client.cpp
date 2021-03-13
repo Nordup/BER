@@ -6,6 +6,11 @@ namespace TestBER
     {
     public:
 
+        /**
+         * trying to connect to the server
+         * creating thread for handling incoming data
+         * @return 0 if success, otherwise 1
+         */
         int run(std::string arg) override
         {
             try
@@ -20,6 +25,7 @@ namespace TestBER
                 recieve_thread.join(); // recieve until shut down connection
 
                 disconnect();
+                std::cout << "Disconnected." << std::endl;
             }
             catch (Exception& exc)
             {
@@ -43,7 +49,9 @@ namespace TestBER
         {
             sAddress = SocketAddress(hostAndPort);
             socket = StreamSocket();
-            socket.connect(sAddress, Poco::Timespan(1l, 0l)); // sets the socket timeout and establishes a connection to the TCP server at the given address.
+            
+            // set the socket timeout and establishe a connection to the TCP server at the given address.
+            socket.connect(sAddress, Poco::Timespan(1l, 0l));
         }
 
         void disconnect()
@@ -52,7 +60,7 @@ namespace TestBER
         }
 
         /**
-         * Receive data and handle it
+         * Receive data from server in loop and handle it
          */
         void receiveDataFromServer()
         {
@@ -86,8 +94,10 @@ int     main(int argc, char** argv)
         return 0;
     }
 
+    // initialize singleton
     TestBER::Singleton::get().connection = new TestBER::Client();
     TestBER::Singleton::get().input_output = new TestBER::IO();
 
+    // run the Client
     return TestBER::Singleton::get().connection->run(argv[1]);
 }

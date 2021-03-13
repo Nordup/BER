@@ -8,6 +8,8 @@ namespace TestBER
     Event terminator;
 #endif
 
+    // Poco::Net::TCPServerConnectionFactory creates instances of this class for every connected client
+    // and deletes when he is disconnected
     class ClientConnection: public TCPServerConnection
     {
     public:
@@ -15,13 +17,17 @@ namespace TestBER
         ClientConnection(const StreamSocket& s): TCPServerConnection(s) {}
 
         /**
+         * overrided method from Poco::Runnable for calling in new thread
          * Receive data and handle it
          */
         void run() override
         {
+            // gets this client socket
             StreamSocket& ss = socket();
+
             addToStaticList(ss);
 
+            // recieving data in loop
             try
             {
                 char buffer[256];
@@ -43,13 +49,20 @@ namespace TestBER
             removeFromStaticList(ss);
         }
 
+        /**
+         * Creates static list in first call 
+         * and returns it
+         * @return static list for accessing all clients sockets
+         */
         static std::list<StreamSocket>& getClientsSockets()
         {
-            // static list for all ClientConnection objects
             static std::list<StreamSocket> clientsSockets;
             return clientsSockets;
         }
 
+        /**
+         * static mutex for accessing clientsSockets
+         */
         static std::mutex& getMutex()
         {
             // static mutex accessing clientsSockets
@@ -82,10 +95,17 @@ namespace TestBER
 
     typedef TCPServerConnectionFactoryImpl<ClientConnection> TCPFactory;
 
+
+    // For running TCPServer, receiving and sending data from/to clients
     class Server: public TcpConnection
     {
     public:
 
+        /**
+         * Creates a TCPServer for listenning for connections
+         * and handling them in thread per client
+         * @return 0 if success, otherwise 1
+         */
         int run(std::string arg)
         {
             try
@@ -145,9 +165,10 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    // initialize singleton
     TestBER::Singleton::get().connection = new TestBER::Server();
     TestBER::Singleton::get().input_output = new TestBER::IO();
 
+    // run the Server
     return TestBER::Singleton::get().connection->run(argv[1]);
-
 }
