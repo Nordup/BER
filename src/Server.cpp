@@ -11,9 +11,9 @@ namespace TestBER
     class ClientConnection: public TCPServerConnection
     {
     public:
-        ClientConnection(const StreamSocket& s): TCPServerConnection(s)
-        {
-        }
+
+        ClientConnection();
+        ClientConnection(const StreamSocket& s): TCPServerConnection(s) {}
 
         /**
          * Receive data and handle it
@@ -21,6 +21,9 @@ namespace TestBER
         void run() override
         {
             StreamSocket& ss = socket();
+            // store socket in static list field
+            addToStaticList(ss);
+
             try
             {
                 char buffer[256];
@@ -38,12 +41,37 @@ namespace TestBER
             {
                 std::cerr << "ClientConnection: " << exc.displayText() << std::endl;
             }
+
+            removeFromStaticList(ss);
+        }
+
+        static std::list<StreamSocket> getClientsSockets()
+        {
+            return clientsSockets;
+        }
+
+    private:
+        static std::list<StreamSocket> clientsSockets;
+        static std::mutex mutex;
+
+        static void addToStaticList(StreamSocket& socket)
+        {
+            mutex.lock();
+            clientsSockets.push_back(socket);
+            mutex.unlock();
+        }
+
+        static void removeFromStaticList(StreamSocket& socket)
+        {
+            mutex.lock();
+            clientsSockets.remove(socket);
+            mutex.unlock();
         }
     };
 
     typedef TCPServerConnectionFactoryImpl<ClientConnection> TCPFactory;
 
-    class TcpServer
+    class Server
     {
     public:
 
@@ -55,9 +83,16 @@ namespace TestBER
 
                 TCPServer srv(new TestBER::TCPFactory(), port);
                 srv.start();
+                //tcpServer = &srv;
 
                 std::cout << "TCP server listening on port " << port << '.'
                     << std::endl << "Press Ctrl-C to quit." << std::endl;
+                
+                while(true)
+                {
+                    sendDataToAll("Hello, client!");
+                    sleep(4);
+                }
 
                 TestBER::terminator.wait();
             }
@@ -66,13 +101,33 @@ namespace TestBER
                 std::cerr << exc.displayText() << std::endl;
                 return 1;
             }
+
             return 0;
         }
-    private:
+ 
+        void sendDataToAll(std::string msg)
+        {
+            for (auto sSocket: ClientConnection::getClientsSockets())
+            {
+                try
+                {
+                    sSocket.sendBytes(msg.c_str(), msg.length(), 0);
+                }
+                catch(const std::exception& e)
+                {
+                    std::cerr << e.what() << '\n';
+                }
+            }
+        }
 
+   private:
+        //TCPServer *tcpServer; // pointer to stack allocated variable
     };
 }
 
+// store StreamSockets
+std::list<StreamSocket> TestBER::ClientConnection::clientsSockets;
+std::mutex TestBER::ClientConnection::mutex;
 
 int main(int argc, char** argv)
 {
@@ -83,6 +138,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    TestBER::TcpServer server;
+    TestBER::Server server;
     return server.run(argv[1]);
 }

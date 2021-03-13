@@ -11,6 +11,8 @@
 #include "Poco/NamedEvent.h"
 #include <iostream>
 #include <thread>
+#include <list>
+#include <mutex>
 
 using Poco::Net::TCPServer;
 using Poco::Net::TCPServerConnectionFilter;
@@ -27,5 +29,6 @@ using Poco::NamedEvent;
 using Poco::Process;
 using Poco::ProcessImpl;
 using Poco::Exception;
+
 
 #endif

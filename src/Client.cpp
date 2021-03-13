@@ -2,13 +2,7 @@
 
 namespace TestBER
 {
-#if defined(POCO_OS_FAMILY_WINDOWS)
-        NamedEvent terminator(ProcessImpl::terminationEventName(Process::id()));
-#else
-        Event terminator;
-#endif
-
-    class TcpClient
+    class Client
     {
     public:
 
@@ -22,7 +16,7 @@ namespace TestBER
                 std::cout << "Connected to host: " << sAddress << std::endl;
                 std::cout << "Press Ctrl-C to quit." << std::endl;
 
-                std::thread recieve_thread(&TcpClient::receiveDataFromServer, this);
+                std::thread recieve_thread(&Client::receiveDataFromServer, this);
                 recieve_thread.join(); // recieve until shut down connection
 
                 disconnect();
@@ -32,6 +26,7 @@ namespace TestBER
                 std::cerr << exc.displayText() << std::endl;
                 return 1;
             }
+
             return 0;
         }
 
@@ -75,10 +70,10 @@ namespace TestBER
             }
         }
 
-        //void sendMessage(std::string msg)
-        //{
-            //socket.sendBytes(msg.c_str(), msg.length(), 0);
-        //}
+        void sendMessage(std::string msg)
+        {
+            socket.sendBytes(msg.c_str(), msg.length(), 0);
+        }
     };
 }
 
@@ -91,6 +86,6 @@ int     main(int argc, char** argv)
         return 0;
     }
 
-    TestBER::TcpClient client;
+    TestBER::Client client;
     return client.run(argv[1]);
 }

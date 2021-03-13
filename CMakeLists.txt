@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 14)
 project(TestBER)
 
 # add the executable
-add_executable(server src/TcpServer.cpp)
-add_executable(client src/TcpClient.cpp)
+add_executable(server src/Server.cpp)
+add_executable(client src/Client.cpp)
 
 # include shared library
 find_package(Poco REQUIRED Net Util)
