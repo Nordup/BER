@@ -34,7 +34,7 @@ namespace
         {
         }
 
-        void run()
+        void run() override
         {
             StreamSocket& ss = socket();
             try
@@ -69,9 +69,16 @@ namespace
 
 int main(int argc, char** argv)
 {
+    if (argc != 2)
+    {
+        std::cout << "usage: ./server [port]" << std::endl
+            << "    port - int from 0 to 65535 or '-d' for default '2001'" << std::endl;
+        return 0;
+    }
+
     try
     {
-        Poco::UInt16 port = NumberParser::parse((argc > 1) ? argv[1] : "2001");
+        Poco::UInt16 port = NumberParser::parse( (std::strcmp(argv[1], "-d") == 0) ? "2001" : argv[1] );
 
         TCPServer srv(new TCPFactory(), port);
         srv.start();

@@ -7,6 +7,7 @@
 #include "Poco/Process.h"
 #include "Poco/NamedEvent.h"
 #include <iostream>
+#include <thread>
 
 using Poco::Net::TCPServer;
 using Poco::Net::TCPServerConnectionFilter;
@@ -27,7 +28,7 @@ using Poco::Exception;
 
 namespace
 {
-    class TcpClient: public Poco::Runnable
+    class TcpClient
     {
     public:
         void connect(const std::string& hostAndPort)
@@ -42,10 +43,31 @@ namespace
             socket.shutdown();
         }
 
-        void run() override
+        void run()
         {
-            // send and recieve data
+            try
+            {
+                char buffer[256];
+                int n = socket.receiveBytes(buffer, sizeof(buffer));
+                while (n > 0)
+                {
+                    std::cout << "Received " << n << " bytes:" << std::endl;
+                    std::string msg;
+                    Logger::formatDump(msg, buffer, n);
+                    std::cout << msg << std::endl;
+                    n = socket.receiveBytes(buffer, sizeof(buffer));
+                }
+            }
+            catch (Exception& exc)
+            {
+                std::cerr << "ClientConnection: " << exc.displayText() << std::endl;
+            }
         }
+
+        //void sendMessage(std::string msg)
+        //{
+            //socket.sendBytes(msg.c_str(), msg.length(), 0);
+        //}
 
         std::string getIpAddress()
         {
@@ -66,8 +88,6 @@ namespace
 
 int     main(int argc, char** argv)
 {
-    TcpClient client;
-
     if (argc != 2)
     {
         std::cout << "usage: ./client [argument]" << std::endl
@@ -77,12 +97,16 @@ int     main(int argc, char** argv)
 
     try
     {
+        TcpClient client;
+
         std::string hostAndPort = (std::strcmp(argv[1], "-d") == 0) ? "0.0.0.0:2001" : argv[1];
 
         client.connect(hostAndPort);
         std::cout << "Connected to host: " << client.getIpAddress() << std::endl;
         std::cout << "Press Ctrl-C to quit." << std::endl;
-        
+
+        std::thread th(&TcpClient::run, client);
+
         terminator.wait();
     }
     catch (Exception& exc)
