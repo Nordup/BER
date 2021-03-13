@@ -2,6 +2,12 @@
 
 namespace TestBER
 {
+#if defined(POCO_OS_FAMILY_WINDOWS)
+    NamedEvent terminator(ProcessImpl::terminationEventName(Process::id()));
+#else
+    Event terminator;
+#endif
+
     class ClientConnection: public TCPServerConnection
     {
     public:
@@ -37,11 +43,34 @@ namespace TestBER
 
     typedef TCPServerConnectionFactoryImpl<ClientConnection> TCPFactory;
 
-#if defined(POCO_OS_FAMILY_WINDOWS)
-    NamedEvent terminator(ProcessImpl::terminationEventName(Process::id()));
-#else
-    Event terminator;
-#endif
+    class TcpServer
+    {
+    public:
+
+        int run(std::string arg)
+        {
+            try
+            {
+                Poco::UInt16 port = NumberParser::parse( (arg == "-d") ? "2001" : arg );
+
+                TCPServer srv(new TestBER::TCPFactory(), port);
+                srv.start();
+
+                std::cout << "TCP server listening on port " << port << '.'
+                    << std::endl << "Press Ctrl-C to quit." << std::endl;
+
+                TestBER::terminator.wait();
+            }
+            catch (Exception& exc)
+            {
+                std::cerr << exc.displayText() << std::endl;
+                return 1;
+            }
+            return 0;
+        }
+    private:
+
+    };
 }
 
 
@@ -54,23 +83,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    try
-    {
-        Poco::UInt16 port = NumberParser::parse( (std::strcmp(argv[1], "-d") == 0) ? "2001" : argv[1] );
-
-        TCPServer srv(new TestBER::TCPFactory(), port);
-        srv.start();
-
-        std::cout << "TCP server listening on port " << port << '.'
-            << std::endl << "Press Ctrl-C to quit." << std::endl;
-
-        TestBER::terminator.wait();
-    }
-    catch (Exception& exc)
-    {
-        std::cerr << exc.displayText() << std::endl;
-        return 1;
-    }
-
-    return 0;
+    TestBER::TcpServer server;
+    return server.run(argv[1]);
 }

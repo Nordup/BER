@@ -22,9 +22,9 @@ namespace TestBER
                 std::cout << "Connected to host: " << sAddress << std::endl;
                 std::cout << "Press Ctrl-C to quit." << std::endl;
 
-                std::thread th(&TcpClient::receiveDataFromServer, this);
+                std::thread recieve_thread(&TcpClient::receiveDataFromServer, this);
+                recieve_thread.join(); // recieve until shut down connection
 
-                terminator.wait();
                 disconnect();
             }
             catch (Exception& exc)

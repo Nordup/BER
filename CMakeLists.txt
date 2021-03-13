@@ -5,13 +5,13 @@ set(CMAKE_CXX_STANDARD 14)
 project(TestBER)
 
 # add the executable
-add_executable(server TcpServer.cpp)
-add_executable(client TcpClient.cpp)
+add_executable(server src/TcpServer.cpp)
+add_executable(client src/TcpClient.cpp)
 
 # include shared library
-find_package(Poco REQUIRED Net Util JSON XML)
-target_link_libraries(server PUBLIC Poco::Net Poco::Util Poco::JSON Poco::XML)
-target_link_libraries(client PUBLIC Poco::Net Poco::Util Poco::JSON Poco::XML)
+find_package(Poco REQUIRED Net Util)
+target_link_libraries(server PUBLIC Poco::Net Poco::Util)
+target_link_libraries(client PUBLIC Poco::Net Poco::Util)
 
 # include header
 include_directories(include/)
