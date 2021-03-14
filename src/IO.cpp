@@ -1,5 +1,6 @@
 #include "IO.hpp"
 #include "Singleton.hpp"
+#include "test.hpp"
 
 namespace TestBER
 {
@@ -16,7 +17,17 @@ namespace TestBER
             std::string message;
             std::getline(std::cin, message);
 
-            Singleton::get().connection->sendData(message);
+            std::vector<unsigned char> data(message.begin(), message.end());
+
+            std::vector< std::vector<unsigned char> > vector;
+            vector.push_back(data);
+
+            //test
+            //std::cout << "Send data:" << std::endl;
+            //test_print_Vector(data);
+
+            //Singleton::get().connection->sendData(data);
+            Singleton::get().connection->sendData(vector);
         }
     }
     
@@ -27,6 +38,7 @@ namespace TestBER
         std::cout << "String representation:" << std::endl;
 
         std::copy(data.begin(), data.end(), std::ostream_iterator<unsigned char>(std::cout, ""));
+        std::cout << std::endl;
     }
 
     void IO::addToPrint(std::vector<unsigned char> data)

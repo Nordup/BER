@@ -4,7 +4,6 @@
 #include <iostream>
 #include <iterator>
 #include <thread>
-#include <cstddef>
 #include <vector>
 
 namespace TestBER
@@ -12,6 +11,9 @@ namespace TestBER
     class IO
     {
     public:
+        /**
+         * run readInput() tread detached
+         */
         IO();
         ~IO();
 

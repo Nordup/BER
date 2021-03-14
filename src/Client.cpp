@@ -39,9 +39,13 @@ namespace TestBER
             return 0;
         }
         
-        void sendData(std::string msg) override
+        void sendData(std::vector< std::vector<unsigned char> > vector) override
         {
-            socket.sendBytes(msg.c_str(), msg.length(), 0);
+            sendDataToSocket(socket, vector);
+        }
+        void sendData(std::vector<unsigned char> data) override
+        {
+            sendDataToSocket(socket, data);
         }
 
     private:

@@ -11,20 +11,41 @@ namespace TestBER
             buf.len = socket.receiveBytes(buf.data, sizeof(buf.data));
             while (buf.len > 0)
             {
-                handleData(buf, ber);
+                auto decoded = ber.decodeData(buf);
+                if (!decoded.empty())
+                    Singleton::get().input_output->addToPrint(decoded); // Singleton->IO->print
+
                 buf.len = socket.receiveBytes(buf.data, sizeof(buf.data));
             }
         }
         catch (Exception& exc)
         {
-            std::cerr << "ClientConnection: " << exc.displayText() << std::endl;
+            std::cerr << "In 'receiveDataFromSocket': " << exc.displayText() << std::endl;
         }
     }
 
-    void handleData(t_buffer buf, BER& ber)
+    void sendDataToSocket(StreamSocket& socket, std::vector< std::vector<unsigned char> > vector)
     {
-        auto data = ber.decodeData(buf);
-        if (!data.empty())
-            Singleton::get().input_output->addToPrint(data); // Singleton->IO->print
+        try
+        {
+            auto encoded = BER::encodeData(vector); // TODO: move vector
+            socket.sendBytes(std::data(encoded), encoded.size(), 0);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "In 'sendDataToSocket: " << e.what() << '\n';
+        }
+    }
+    void sendDataToSocket(StreamSocket& socket, std::vector<unsigned char> data)
+    {
+        try
+        {
+            auto encoded = BER::encodeData(data); // TODO: move vector
+            socket.sendBytes(std::data(encoded), encoded.size(), 0);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "In 'sendDataToSocket: " << e.what() << '\n';
+        }
     }
 }

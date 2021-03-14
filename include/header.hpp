@@ -16,7 +16,6 @@
 #include <mutex>
 #include <list>
 #include <vector>
-#include <cstddef>
 
 using Poco::Net::TCPServer;
 using Poco::Net::TCPServerConnectionFilter;
@@ -34,6 +33,8 @@ using Poco::Process;
 using Poco::ProcessImpl;
 using Poco::Exception;
 
+namespace TestBER
+{
     #define BUFFER_SIZE 256
 
     typedef struct s_byteBuffer
@@ -41,6 +42,6 @@ using Poco::Exception;
         unsigned char data[BUFFER_SIZE];
         int len;
     } t_buffer;
-
+}
 
 #endif

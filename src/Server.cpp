@@ -118,18 +118,18 @@ namespace TestBER
         /**
          * send data to all clients
          */
-        void sendData(std::string msg) override
+        void sendData(std::vector< std::vector<unsigned char> > vector) override
         {
             for (auto sSocket: ClientConnection::getClientsSockets())
             {
-                try
-                {
-                    sSocket.sendBytes(msg.c_str(), msg.length(), 0);
-                }
-                catch(const std::exception& e)
-                {
-                    std::cerr << e.what() << '\n';
-                }
+                sendDataToSocket(sSocket, vector);
+            }
+        }
+        void sendData(std::vector<unsigned char> data) override
+        {
+            for (auto sSocket: ClientConnection::getClientsSockets())
+            {
+                sendDataToSocket(sSocket, data);
             }
         }
     };

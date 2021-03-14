@@ -1,6 +1,7 @@
 #ifndef FUNCTIONS_HPP
 #define FUNCTIONS_HPP
 
+#include "header.hpp"
 #include "BER.hpp"
 
 namespace TestBER
@@ -11,7 +12,9 @@ namespace TestBER
      */
     void receiveDataFromSocket(StreamSocket& socket, BER& ber);
 
-    void handleData(t_buffer buf, BER& ber);
+    void sendDataToSocket(StreamSocket& socket, std::vector< std::vector<unsigned char> > vector);
+
+    void sendDataToSocket(StreamSocket& socket, std::vector<unsigned char> data);
 }
 
 #endif

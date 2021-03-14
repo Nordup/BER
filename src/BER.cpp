@@ -1,15 +1,26 @@
 #include "BER.hpp"
-#include "functions.hpp"
 
 namespace TestBER
 {
     std::vector<unsigned char> BER::decodeData(t_buffer buf)
     {
-        return {};
+        std::vector<unsigned char> data(buf.data, buf.data + buf.len);
+        return data;
     }
 
-    std::vector<unsigned char> BER::encodeData(std::vector< std::vector<std::byte> > vertor)
+    std::vector<unsigned char> BER::encodeData(std::vector< std::vector<unsigned char> > vector)
     {
-        return {};
+        std::vector<unsigned char> fullData;
+
+        for (auto& data: vector)
+        {
+            fullData.insert(fullData.end(), data.begin(), data.end());
+        }
+        return fullData;
+    }
+
+    std::vector<unsigned char> BER::encodeData(std::vector<unsigned char> data)
+    {
+        return data;
     }
 }
