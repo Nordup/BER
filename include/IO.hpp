@@ -11,9 +11,12 @@ namespace TestBER
     public:
         IO();
         ~IO();
+
+        void printOutput(std::string message);
     private:
         // while IO object is alive
         bool alive = true;
+
         /**
          * wait for inputs in new thread
          * and call Singleton::connection->sendData

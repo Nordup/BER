@@ -14,12 +14,15 @@ namespace TestBER
         while (IO::alive)
         {
             std::string message;
-            std::cin >> message;
+            std::getline(std::cin, message);
 
             Singleton::get().connection->sendData(message);
         }
-
-        std::cout << "readInput is done" << std::endl;
+    }
+    
+    void IO::printOutput(std::string message)
+    {
+        std::cout << message << std::endl;
     }
 
     IO::~IO()

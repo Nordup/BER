@@ -34,10 +34,13 @@ namespace TestBER
                 int n = ss.receiveBytes(buffer, sizeof(buffer));
                 while (n > 0)
                 {
+                    // Logger::formatDump(msg, buffer, n);
+                    std::string msg(buffer, n);
+
                     std::cout << "Received " << n << " bytes:" << std::endl;
-                    std::string msg;
-                    Logger::formatDump(msg, buffer, n);
-                    std::cout << msg << std::endl;
+                    // Singleton->IO->print
+                    Singleton::get().input_output->printOutput(msg);
+
                     n = ss.receiveBytes(buffer, sizeof(buffer));
                 }
             }
