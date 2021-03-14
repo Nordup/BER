@@ -118,12 +118,6 @@ namespace TestBER
                 std::cout << "TCP server listening on port " << port << '.'
                     << std::endl << "Press Ctrl-C to quit." << std::endl;
                 
-                while(true)
-                {
-                    sendData("Hello, client!");
-                    sleep(4);
-                }
-
                 TestBER::terminator.wait();
             }
             catch (Exception& exc)

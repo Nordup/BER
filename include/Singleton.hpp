@@ -1,6 +1,8 @@
 #ifndef SINGLETON_HPP
 #define SINGLETON_HPP
 
+#include "IO.hpp"
+
 namespace TestBER
 {
     // interface for Server and Client
@@ -30,12 +32,10 @@ namespace TestBER
             return instance;
         }
 
-        ~Singleton()
+       ~Singleton()
         {
-            if (connection)
-                delete connection;
-            if (input_output)
-                delete input_output;
+            delete connection;
+            delete input_output;
         }
 
     private:
