@@ -13,13 +13,10 @@
 // std libraries
 #include <iostream>
 #include <thread>
-#include <list>
 #include <mutex>
-
-// TestBER classes
-#include "BER.hpp"
-#include "IO.hpp"
-#include "Singleton.hpp"
+#include <list>
+#include <vector>
+#include <cstddef>
 
 using Poco::Net::TCPServer;
 using Poco::Net::TCPServerConnectionFilter;
@@ -36,6 +33,14 @@ using Poco::NamedEvent;
 using Poco::Process;
 using Poco::ProcessImpl;
 using Poco::Exception;
+
+    #define BUFFER_SIZE 256
+
+    typedef struct s_byteBuffer
+    {
+        unsigned char data[BUFFER_SIZE];
+        int len;
+    } t_buffer;
 
 
 #endif

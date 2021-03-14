@@ -1,4 +1,6 @@
 #include "header.hpp"
+#include "Singleton.hpp"
+#include "functions.hpp"
 
 namespace TestBER
 {
@@ -14,7 +16,7 @@ namespace TestBER
     {
     public:
 
-        ClientConnection(const StreamSocket& s): TCPServerConnection(s) {}
+        ClientConnection(const StreamSocket& s): TCPServerConnection(s), ber() {}
 
         /**
          * overrided method from Poco::Runnable for calling in new thread
@@ -23,33 +25,13 @@ namespace TestBER
         void run() override
         {
             // gets this client socket
-            StreamSocket& ss = socket();
+            StreamSocket& ssocket = socket();
 
-            addToStaticList(ss);
+            addToStaticList(ssocket);
 
-            // recieving data in loop
-            try
-            {
-                char buffer[256];
-                int n = ss.receiveBytes(buffer, sizeof(buffer));
-                while (n > 0)
-                {
-                    // Logger::formatDump(msg, buffer, n);
-                    std::string msg(buffer, n);
+            receiveDataFromSocket(ssocket, ber);
 
-                    std::cout << "Received " << n << " bytes:" << std::endl;
-                    // Singleton->IO->print
-                    Singleton::get().input_output->printOutput(msg);
-
-                    n = ss.receiveBytes(buffer, sizeof(buffer));
-                }
-            }
-            catch (Exception& exc)
-            {
-                std::cerr << "ClientConnection: " << exc.displayText() << std::endl;
-            }
-
-            removeFromStaticList(ss);
+            removeFromStaticList(ssocket);
         }
 
         /**
@@ -74,6 +56,7 @@ namespace TestBER
         }
 
     private:
+        BER ber;
 
         /**
          * add StreamSocket to static list for accessing to send data

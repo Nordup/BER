@@ -1,10 +1,13 @@
 #include "header.hpp"
+#include "Singleton.hpp"
+#include "functions.hpp"
 
 namespace TestBER
 {
     class Client: public TcpConnection
     {
     public:
+        Client(): ber() {}
 
         /**
          * trying to connect to the server
@@ -21,7 +24,7 @@ namespace TestBER
                 std::cout << "Connected to host: " << sAddress << std::endl;
                 std::cout << "Press Ctrl-C to quit." << std::endl;
 
-                std::thread recieve_thread(&Client::receiveDataFromServer, this);
+                std::thread recieve_thread(&receiveDataFromSocket, std::ref(socket), std::ref(ber));
                 recieve_thread.join(); // recieve until shut down connection
 
                 disconnect();
@@ -44,6 +47,7 @@ namespace TestBER
     private:
         StreamSocket socket;
         SocketAddress sAddress;
+        BER ber;
 
         void connect(const std::string& hostAndPort)
         {
@@ -59,32 +63,7 @@ namespace TestBER
             socket.shutdown();
         }
 
-        /**
-         * Receive data from server in loop and handle it
-         */
-        void receiveDataFromServer()
-        {
-           try
-            {
-                char buffer[256];
-                int n = socket.receiveBytes(buffer, sizeof(buffer));
-                while (n > 0)
-                {
-                    // Logger::formatDump(msg, buffer, n);
-                    std::string msg(buffer, n);
-
-                    std::cout << "Received " << n << " bytes:" << std::endl;
-                    // Singleton->IO->print
-                    Singleton::get().input_output->printOutput(msg);
-
-                    n = socket.receiveBytes(buffer, sizeof(buffer));
-                }
-            }
-            catch (Exception& exc)
-            {
-                std::cerr << "ClientConnection: " << exc.displayText() << std::endl;
-            }
-        }
+        
     };
 }
 
