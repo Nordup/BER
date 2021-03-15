@@ -39,11 +39,11 @@ namespace TestBER
             return 0;
         }
         
-        void sendData(std::list< std::vector<unsigned char> > vector) override
+        void sendData(const std::list< std::vector<unsigned char> >& vector) override
         {
             sendDataToSocket(socket, vector);
         }
-        void sendData(std::vector<unsigned char> data) override
+        void sendData(const std::vector<unsigned char>& data) override
         {
             sendDataToSocket(socket, data);
         }

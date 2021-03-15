@@ -11,10 +11,10 @@ namespace TestBER
     std::list< std::vector<unsigned char> > BER::readSecondByte(const t_buffer& buf, unsigned int begin)
     {
         // clear vector
-        storeData.resize(0);
         storeData.clear();
+        storeData.resize(0);
 
-        if (buf.len >= 2)
+        if (buf.len - begin >= 2)
         {
             unsigned char length_first = buf.data[begin + 1]; // +1 for second
             unsigned int _need = length_first & (unsigned char)127; // 127 = 0111 1111
@@ -104,10 +104,15 @@ namespace TestBER
             // insert need_data length
             storeData.insert(storeData.end(), buf.data + begin, buf.data + begin + need_data);
 
+            // becouse second call may erase this data
             auto fullData = std::move(storeData);
 
-            // TODO: recursively call readSecondByte
-            return {fullData};
+            // recursively read next data structure
+            auto list = readSecondByte(buf, begin + need_data); // be sure to increase begin arg
+            list.push_front(fullData);
+
+            need_data = 0;
+            return list;
         }
     }
 
@@ -134,7 +139,7 @@ namespace TestBER
         }
     }
 
-    std::vector<unsigned char> BER::encodeData(std::list< std::vector<unsigned char> > list)
+    std::vector<unsigned char> BER::encodeData(const std::list< std::vector<unsigned char> >& list)
     {
         std::vector<unsigned char> fullData;
 
@@ -145,7 +150,7 @@ namespace TestBER
         return fullData;
     }
 
-    std::vector<unsigned char> BER::encodeData(std::vector<unsigned char> data)
+    std::vector<unsigned char> BER::encodeData(const std::vector<unsigned char>& data)
     {
         return data;
     }

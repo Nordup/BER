@@ -12,9 +12,9 @@ namespace TestBER
      */
     void receiveDataFromSocket(StreamSocket& socket, BER& ber);
 
-    void sendDataToSocket(StreamSocket& socket, std::list< std::vector<unsigned char> > vector);
+    void sendDataToSocket(StreamSocket& socket, const std::list< std::vector<unsigned char> >& vector);
 
-    void sendDataToSocket(StreamSocket& socket, std::vector<unsigned char> data);
+    void sendDataToSocket(StreamSocket& socket, const std::vector<unsigned char>& data);
 }
 
 #endif
