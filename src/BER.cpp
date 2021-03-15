@@ -143,15 +143,52 @@ namespace TestBER
     {
         std::vector<unsigned char> fullData;
 
-        for (auto& data: list)
+        for (const auto& data: list)
         {
-            fullData.insert(fullData.end(), data.begin(), data.end());
+            auto encoded = encodeData(data);
+            fullData.insert(fullData.end(), encoded.begin(), encoded.end());
         }
-        return fullData;
+        return std::move(fullData);
     }
 
     std::vector<unsigned char> BER::encodeData(const std::vector<unsigned char>& data)
     {
-        return data;
+        std::vector<unsigned char> encoded;
+        encoded.push_back((unsigned char)0x04); // for BER tag 'OCTET STRING'
+
+        unsigned int length = data.size();
+
+        if (length > 127)
+        {
+            unsigned char count_of_bytes = 1;
+            while ( (length >>= 8) != 0)
+                count_of_bytes++;
+            
+            // debug
+            std::cout << "debug ber.cpp 167: count of bytes: " << count_of_bytes << std::endl;
+
+            encoded.push_back(count_of_bytes | (unsigned char)0x80);
+
+            std::vector<unsigned char> length_bytes;
+            length = data.size();
+            for (int i = 0; i < count_of_bytes; i++)
+            {
+                length_bytes.push_back((unsigned char)(length & 0xff));
+                length >>= 8;
+            }
+
+            std::reverse(length_bytes.begin(), length_bytes.end());
+            encoded.insert(encoded.end(), length_bytes.begin(), length_bytes.end());
+        }
+        else
+        {
+            // debug
+            std::cout << "debug ber.cpp 185: data length: " << length << std::endl;
+
+            encoded.push_back((unsigned char)length);
+        }
+
+        encoded.insert(encoded.end(), data.begin(), data.end());
+        return std::move(encoded);
     }
 }

@@ -19,15 +19,11 @@ namespace TestBER
 
             std::vector<unsigned char> data(message.begin(), message.end());
 
-            std::list< std::vector<unsigned char> > vector;
-            vector.push_back(data);
-
-            //test
-            //std::cout << "Send data:" << std::endl;
-            //test_print_Vector(data);
+            std::list< std::vector<unsigned char> > list;
+            list.push_back(data);
 
             //Singleton::get().connection->sendData(data);
-            Singleton::get().connection->sendData(vector);
+            Singleton::get().connection->sendData(list);
         }
     }
     
