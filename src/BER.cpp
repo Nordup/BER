@@ -11,7 +11,6 @@ namespace TestBER
     std::list< std::vector<unsigned char> > BER::readSecondByte(const t_buffer& buf, unsigned int begin)
     {
         // clear vector
-        storeData.clear();
         storeData.resize(0);
 
         if (buf.len - begin >= 2)
@@ -23,9 +22,6 @@ namespace TestBER
             {
                 need_data = _need;
                 need_length = 0; // for sure
-
-                // debug
-                std::cout << "debug; need_data: " << need_data << std::endl;
 
                 storeData.resize(need_data); // size is counted
                 return readValue(buf, begin + 2);
@@ -40,7 +36,6 @@ namespace TestBER
         }
         else
         {
-            std::cout << "Received wrong message. Size must be more than 1 byte." << std::endl;
             return {};
         }
     }
@@ -70,7 +65,7 @@ namespace TestBER
             }
 
             need_length -= (buf.len - begin); // update status: need_length > 0
-            return {}; // empty vector
+            return {}; // empty list
         }
     }
 
@@ -79,7 +74,7 @@ namespace TestBER
         unsigned int data_len = buf.len - begin;
 
         if (need_data == 0)
-            return {storeData};
+            return { std::move(storeData) };
         else if (data_len == 0)
             return {};
 
@@ -97,7 +92,7 @@ namespace TestBER
             storeData.insert(storeData.end(), buf.data + begin, buf.data + buf.len);
 
             need_data = 0;
-            return {storeData};
+            return { std::move(storeData) };
         }
         else // data_len > need_data
         {
@@ -112,7 +107,7 @@ namespace TestBER
             list.push_front(fullData);
 
             need_data = 0;
-            return list;
+            return std::move(list);
         }
     }
 
@@ -163,17 +158,14 @@ namespace TestBER
             unsigned char count_of_bytes = 1;
             while ( (length >>= 8) != 0)
                 count_of_bytes++;
-            
-            // debug
-            std::cout << "debug ber.cpp 167: count of bytes: " << count_of_bytes << std::endl;
 
-            encoded.push_back(count_of_bytes | (unsigned char)0x80);
+            encoded.push_back(count_of_bytes | (unsigned char)0x80); // add 0b_1000_0000
 
-            std::vector<unsigned char> length_bytes;
+            std::vector<unsigned char> length_bytes; // to represent each length byte
             length = data.size();
             for (int i = 0; i < count_of_bytes; i++)
             {
-                length_bytes.push_back((unsigned char)(length & 0xff));
+                length_bytes.push_back((unsigned char)(length & 0xff)); // push last byte of length
                 length >>= 8;
             }
 
@@ -182,9 +174,6 @@ namespace TestBER
         }
         else
         {
-            // debug
-            std::cout << "debug ber.cpp 185: data length: " << length << std::endl;
-
             encoded.push_back((unsigned char)length);
         }
 

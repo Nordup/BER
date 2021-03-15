@@ -28,7 +28,7 @@ namespace TestBER
     {
         try
         {
-            auto encoded = BER::encodeData(vector); // TODO: move vector
+            auto encoded = BER::encodeData(vector);
             socket.sendBytes(std::data(encoded), encoded.size(), 0);
         }
         catch(const std::exception& e)
@@ -40,7 +40,7 @@ namespace TestBER
     {
         try
         {
-            auto encoded = BER::encodeData(data); // TODO: move vector
+            auto encoded = BER::encodeData(data);
             socket.sendBytes(std::data(encoded), encoded.size(), 0);
         }
         catch(const std::exception& e)

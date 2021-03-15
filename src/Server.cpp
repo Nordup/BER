@@ -125,6 +125,9 @@ namespace TestBER
                 sendDataToSocket(sSocket, vector);
             }
         }
+        /**
+         * send data to all clients
+         */
         void sendData(const std::vector<unsigned char>& data) override
         {
             for (auto sSocket: ClientConnection::getClientsSockets())

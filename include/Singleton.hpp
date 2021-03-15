@@ -10,10 +10,12 @@ namespace TestBER
     class TcpConnection
     {
         public:
+            /**
+             * Client.run() or Server.run()
+             */
             virtual int run(std::string arg) = 0;
 
             virtual void sendData(const std::list< std::vector<unsigned char> >& vector) = 0;
-
             virtual void sendData(const std::vector<unsigned char>& data) = 0;
     };
 
@@ -23,11 +25,14 @@ namespace TestBER
     class Singleton
     {
     public:
-        TcpConnection* connection = NULL;
-        IO* input_output = NULL;
+        TcpConnection* connection = NULL; // TcpConnection: Server or Client object
+        IO* input_output = NULL; // IO for input output
 
         Singleton(Singleton&) = delete;
 
+        /**
+         * @return static instance of Singleton
+         */
         static Singleton& get()
         {
             static Singleton instance;

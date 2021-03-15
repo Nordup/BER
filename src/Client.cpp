@@ -39,10 +39,16 @@ namespace TestBER
             return 0;
         }
         
+        /**
+         * send data to server
+         */
         void sendData(const std::list< std::vector<unsigned char> >& vector) override
         {
             sendDataToSocket(socket, vector);
         }
+        /**
+         * send data to server
+         */
         void sendData(const std::vector<unsigned char>& data) override
         {
             sendDataToSocket(socket, data);
@@ -66,8 +72,6 @@ namespace TestBER
         {
             socket.shutdown();
         }
-
-        
     };
 }
 
