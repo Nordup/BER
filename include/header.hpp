@@ -40,7 +40,7 @@ namespace TestBER
     typedef struct s_byteBuffer
     {
         unsigned char data[BUFFER_SIZE];
-        int len;
+        unsigned int len;
     } t_buffer;
 }
 
