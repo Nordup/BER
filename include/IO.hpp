@@ -5,6 +5,7 @@
 #include <iterator>
 #include <thread>
 #include <vector>
+#include <list>
 #include <sstream>
 
 namespace TestBER
@@ -18,7 +19,8 @@ namespace TestBER
         IO();
         ~IO();
 
-        void addToPrint(std::vector<unsigned char> data);
+        //void addToPrint(std::vector<unsigned char> data);
+        void addToPrint(std::list< std::vector<unsigned char> > list);
     private:
         // while IO object is alive
         bool alive = true;
@@ -29,7 +31,8 @@ namespace TestBER
          */
         void readInput();
 
-        void printOutput(std::vector<unsigned char> data);
+        //void printOutput(std::vector<unsigned char> data);
+        void printOutput(std::list< std::vector<unsigned char> > list);
     };
 }
 

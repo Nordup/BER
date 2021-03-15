@@ -8,7 +8,7 @@ namespace TestBER
         need_length = 0;
     }
 
-    std::vector<unsigned char> BER::readSecondByte(const t_buffer& buf, unsigned int begin)
+    std::list< std::vector<unsigned char> > BER::readSecondByte(const t_buffer& buf, unsigned int begin)
     {
         // clear vector
         storeData.resize(0);
@@ -41,10 +41,11 @@ namespace TestBER
         else
         {
             std::cout << "Received wrong message. Size must be more than 1 byte." << std::endl;
+            return {};
         }
     }
 
-    std::vector<unsigned char> BER::readLength(const t_buffer& buf, unsigned int begin)
+    std::list< std::vector<unsigned char> > BER::readLength(const t_buffer& buf, unsigned int begin)
     {
         if (buf.len >= need_length + begin)
         {
@@ -73,52 +74,71 @@ namespace TestBER
         }
     }
 
-    std::vector<unsigned char> BER::readValue(const t_buffer& buf, unsigned int begin)
+    std::list< std::vector<unsigned char> > BER::readValue(const t_buffer& buf, unsigned int begin)
     {
-        if (buf.len < need_data)
-        {
+        unsigned int data_len = buf.len - begin;
 
+        if (need_data == 0)
+            return {storeData};
+        else if (data_len == 0)
+            return {};
+
+        if (data_len < need_data)
+        {
+            // insert bufer from begin to end
+            storeData.insert(storeData.end(), buf.data + begin, buf.data + buf.len);
+
+            need_data -= data_len;
+            return {};
         }
-        else if (buf.len == need_data)
+        else if (data_len == need_data)
         {
+            // insert bufer from begin to end
+            storeData.insert(storeData.end(), buf.data + begin, buf.data + buf.len);
 
+            need_data = 0;
+            return {storeData};
         }
-        else
+        else // data_len > need_data
         {
+            // insert need_data length
+            storeData.insert(storeData.end(), buf.data + begin, buf.data + begin + need_data);
 
+            auto fullData = std::move(storeData);
+
+            // TODO: recursively call readSecondByte
+            return {fullData};
         }
     }
 
-    std::vector<unsigned char> BER::decodeData(const t_buffer& buf)
+    std::list< std::vector<unsigned char> > BER::decodeData(const t_buffer& buf)
     {
         if (buf.len <= 0)
             return {};
 
         if (need_data == 0 && need_length == 0) // new data
         {
-            readSecondByte(buf, 0);
+            return readSecondByte(buf, 0);
         }
         else if (need_data == 0) // need_data length is not counted at all
         {
-            readLength(buf, 0);
+            return readLength(buf, 0);
         }
         else if (need_length == 0) // need_data is counted, need to read Value
         {
-            readValue(buf, 0);
+            return readValue(buf, 0);
         }
         else // need_data length not fully counted
         {
-            readLength(buf, 0);
+            return readLength(buf, 0);
         }
-
-        return {};
     }
 
-    std::vector<unsigned char> BER::encodeData(std::vector< std::vector<unsigned char> > vector)
+    std::vector<unsigned char> BER::encodeData(std::list< std::vector<unsigned char> > list)
     {
         std::vector<unsigned char> fullData;
 
-        for (auto& data: vector)
+        for (auto& data: list)
         {
             fullData.insert(fullData.end(), data.begin(), data.end());
         }

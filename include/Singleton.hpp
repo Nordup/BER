@@ -12,7 +12,7 @@ namespace TestBER
         public:
             virtual int run(std::string arg) = 0;
 
-            virtual void sendData(std::vector< std::vector<unsigned char> > vector) = 0;
+            virtual void sendData(std::list< std::vector<unsigned char> > vector) = 0;
 
             virtual void sendData(std::vector<unsigned char> data) = 0;
     };

@@ -19,7 +19,7 @@ namespace TestBER
 
             std::vector<unsigned char> data(message.begin(), message.end());
 
-            std::vector< std::vector<unsigned char> > vector;
+            std::list< std::vector<unsigned char> > vector;
             vector.push_back(data);
 
             //test
@@ -31,30 +31,33 @@ namespace TestBER
         }
     }
     
-    void IO::printOutput(std::vector<unsigned char> data)
+    void IO::printOutput(std::list< std::vector<unsigned char> > list)
     {
-        std::cout << std::endl << "========================================" << std::endl;
-        std::cout << "Recieved " << data.size() << " bytes." << std::endl;
-        std::stringstream ss;
-        std::copy(data.begin(), data.end(), std::ostream_iterator<unsigned char>(ss, ""));
-
-        std::cout << "----------------------------------------" << std::endl;
-        std::cout << "String representation:" << std::endl;
-        std::cout << ss.str() << std::endl;
-
-        std::cout << "----------------------------------------" << std::endl;
-        std::cout << "Hex representation:" << std::endl;
-        for (int i = 0; i < data.size(); i++)
+        for (auto& data: list)
         {
-            std::cout << std::hex << ss.get() << " ";
+            std::cout << std::endl << "========================================" << std::endl;
+            std::cout << "Recieved " << data.size() << " bytes." << std::endl;
+            std::stringstream ss;
+            std::copy(data.begin(), data.end(), std::ostream_iterator<unsigned char>(ss, ""));
+
+            std::cout << "----------------------------------------" << std::endl;
+            std::cout << "String representation:" << std::endl;
+            std::cout << ss.str() << std::endl;
+
+            std::cout << "----------------------------------------" << std::endl;
+            std::cout << "Hex representation:" << std::endl;
+            for (int i = 0; i < data.size(); i++)
+            {
+                std::cout << std::hex << ss.get() << " ";
+            }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
     }
 
-    void IO::addToPrint(std::vector<unsigned char> data)
+    void IO::addToPrint(std::list< std::vector<unsigned char> > list)
     {
         // by now
-        printOutput(data);
+        printOutput(list);
     }
 
     IO::~IO()

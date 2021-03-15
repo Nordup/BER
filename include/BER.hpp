@@ -14,12 +14,12 @@ namespace TestBER
          * Begin read new Data
          * second becouse first byte for BER tag (except: there is more than 1 byte)
          */
-        std::vector<unsigned char> readSecondByte(const t_buffer& buf, unsigned int begin);
-        std::vector<unsigned char> readLength(const t_buffer& buf, unsigned int begin);
-        std::vector<unsigned char> readValue(const t_buffer& buf, unsigned int begin);
-        std::vector<unsigned char> decodeData(const t_buffer& buf);
+        std::list< std::vector<unsigned char> > readSecondByte(const t_buffer& buf, unsigned int begin);
+        std::list< std::vector<unsigned char> > readLength(const t_buffer& buf, unsigned int begin);
+        std::list< std::vector<unsigned char> > readValue(const t_buffer& buf, unsigned int begin);
+        std::list< std::vector<unsigned char> > decodeData(const t_buffer& buf);
 
-        static std::vector<unsigned char> encodeData(std::vector< std::vector<unsigned char> > vector);
+        static std::vector<unsigned char> encodeData(std::list< std::vector<unsigned char> > list);
 
         static std::vector<unsigned char> encodeData(std::vector<unsigned char> data);
 

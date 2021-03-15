@@ -24,7 +24,7 @@ namespace TestBER
         }
     }
 
-    void sendDataToSocket(StreamSocket& socket, std::vector< std::vector<unsigned char> > vector)
+    void sendDataToSocket(StreamSocket& socket, std::list< std::vector<unsigned char> > vector)
     {
         try
         {
