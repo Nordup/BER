@@ -6,16 +6,23 @@ namespace TestBER
     {
         need_data = 0;
         need_length = 0;
+        tag = false;
     }
 
     std::list< std::vector<unsigned char> > BER::readSecondByte(const t_buffer& buf, unsigned int begin)
     {
         // clear vector
-        storeData.resize(0);
+        storeData.clear();
 
-        if (buf.len - begin >= 2)
+        if (!tag)
         {
-            unsigned char length_first = buf.data[begin + 1]; // +1 for second
+            tag = true;
+            begin++;
+        }
+
+        if (buf.len - begin >= 1)
+        {
+            unsigned char length_first = buf.data[begin];
             unsigned int _need = length_first & (unsigned char)127; // 127 = 0111 1111
 
             if ( (length_first >> 7) == 0 ) // shift right 7 bits
@@ -23,15 +30,15 @@ namespace TestBER
                 need_data = _need;
                 need_length = 0; // for sure
 
-                storeData.resize(need_data); // size is counted
-                return readValue(buf, begin + 2);
+                storeData.reserve(need_data); // size is counted
+                return readValue(buf, begin + 1);
             }
             else
             {
                 need_data = 0; // for sure
                 need_length = _need;
 
-                return readLength(buf, begin + 2);
+                return readLength(buf, begin + 1);
             }
         }
         else
@@ -53,7 +60,7 @@ namespace TestBER
             begin += need_length; // set next begin point
             need_length = 0;
 
-            storeData.resize(need_data); // size is counted
+            storeData.reserve(need_data); // size is counted
             return readValue(buf, begin);
         }
         else
@@ -74,7 +81,10 @@ namespace TestBER
         unsigned int data_len = buf.len - begin;
 
         if (need_data == 0)
+        {
+            tag = false;
             return { std::move(storeData) };
+        }
         else if (data_len == 0)
             return {};
 
@@ -92,6 +102,7 @@ namespace TestBER
             storeData.insert(storeData.end(), buf.data + begin, buf.data + buf.len);
 
             need_data = 0;
+            tag = false;
             return { std::move(storeData) };
         }
         else // data_len > need_data
@@ -107,6 +118,7 @@ namespace TestBER
             list.push_front(fullData);
 
             need_data = 0;
+            tag = false;
             return std::move(list);
         }
     }

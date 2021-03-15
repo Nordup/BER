@@ -19,6 +19,7 @@ add_executable(client src/Client.cpp src/IO.cpp src/BER.cpp src/send_and_receive
 find_package(Poco REQUIRED Net Util)
 target_link_libraries(server PUBLIC Poco::Net Poco::Util)
 target_link_libraries(client PUBLIC Poco::Net Poco::Util)
+# poco in github https://github.com/pocoproject/poco
 
 # include headers
 include_directories(include/)

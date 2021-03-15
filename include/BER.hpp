@@ -27,6 +27,7 @@ namespace TestBER
         std::vector<unsigned char> storeData;
         unsigned int need_data;
         unsigned int need_length;
+        bool tag;
     };
 }
 

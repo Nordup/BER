@@ -1,6 +1,5 @@
 #include "IO.hpp"
 #include "Singleton.hpp"
-#include "test.hpp"
 
 namespace TestBER
 {
@@ -22,14 +21,13 @@ namespace TestBER
             std::list< std::vector<unsigned char> > list;
             list.push_back(data);
 
-            //Singleton::get().connection->sendData(data);
             Singleton::get().connection->sendData(list);
         }
     }
     
     void IO::printOutput(std::list< std::vector<unsigned char> > list)
     {
-        for (auto& data: list)
+        for (const auto& data: list)
         {
             std::cout << std::endl << "========================================" << std::endl;
 
