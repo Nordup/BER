@@ -46,7 +46,7 @@ $ cmake --build .
   ```
 
 ## Picture for understanding of code architecture
-<img src="materials/architecture.jpg" width="700">
+<img src="materials/architecture.jpg" width="630">
 
 #### Let's explain
 1. Connection -> Input/Output
@@ -60,7 +60,7 @@ $ cmake --build .
 I'v choosen [Poco](https://github.com/pocoproject/poco) library which is easy to build and use. It's provided with understandable [documentation](https://pocoproject.org/docs/00200-GettingStarted.html) in their site
 > I have a little bit changed their CMakeList.txt to remove some packages (if it's really works) and build as subdirectory
 
-#### TODO: Add some commands such us
+#### TODO: Add some commands such as
 - [ ] send_hex: 48 69 21;  // it's for 'Hi!'
 - [ ] print_hex;
 - [ ] send_file: ./message.txt;
