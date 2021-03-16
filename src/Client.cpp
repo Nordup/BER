@@ -18,7 +18,7 @@ namespace TestBER
         {
             try
             {
-                std::string hostAndPort = (arg == "-d") ? "0.0.0.0:2001" : arg;
+                std::string hostAndPort = (arg == "-d") ? "127.0.0.1:2001" : arg;
 
                 connect(hostAndPort);
                 std::cout << "Connected to host: " << sAddress << std::endl;
@@ -80,7 +80,7 @@ int     main(int argc, char** argv)
     if (argc != 2)
     {
         std::cout << "usage: ./client [argument]" << std::endl
-            << "    argument - full Ip address or '-d' for default '0.0.0.0:2001'" << std::endl;
+            << "    argument - full Ip address or '-d' for default '127.0.0.1:2001'" << std::endl;
         return 0;
     }
 

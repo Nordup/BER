@@ -83,7 +83,7 @@ namespace TestBER
         if (need_data == 0)
         {
             tag = false;
-            return { std::move(storeData) };
+            return {};
         }
         else if (data_len == 0)
             return {};
