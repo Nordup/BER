@@ -11,7 +11,7 @@ include(PocoConfig)
 
 # add the executable
 add_executable(server src/Server.cpp src/IO.cpp src/BER.cpp src/send_and_receiveData.cpp)
-add_executable(client src/Client.cpp src/IO.cpp src/BER.cpp src/send_and_receiveData.cpp)
+add_executable(client src/Client.cpp src/IO.cpp src/BER.cpp src/send_and_receiveData.cpp) # I know it's compiles twice :)
 
 # include shared library
 #find_package(Poco REQUIRED Net)

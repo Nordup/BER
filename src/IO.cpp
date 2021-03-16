@@ -3,7 +3,7 @@
 
 namespace TestBER
 {
-    IO::IO()
+    IO::IO(): mutex()
     {
         std::thread read_thread(&IO::readInput, this);
         read_thread.detach();
@@ -37,14 +37,16 @@ namespace TestBER
 
             std::cout << "String representation:" << std::endl;
             std::cout << ss.str() << std::endl;
+
             std::cout              << "----------------------------------------" << std::endl;
         }
     }
 
     void IO::addToPrint(std::list< std::vector<unsigned char> > list)
     {
-        // by now
+        mutex.lock();
         printOutput(list);
+        mutex.unlock();
     }
 
     IO::~IO()

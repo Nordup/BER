@@ -46,7 +46,7 @@ $ cmake --build .
   ```
 
 ## Picture for understanding of code architecture
-<img src="materials/architecture.jpg" width="500">
+<img src="materials/architecture.jpg" width="700">
 
 #### Let's explain
 1. Connection -> Input/Output

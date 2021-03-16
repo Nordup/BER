@@ -7,6 +7,7 @@
 #include <vector>
 #include <list>
 #include <sstream>
+#include <mutex>
 
 namespace TestBER
 {
@@ -24,6 +25,7 @@ namespace TestBER
     private:
         // while IO object is alive
         bool alive = true;
+        std::mutex mutex;
 
         /**
          * wait for inputs in new thread
