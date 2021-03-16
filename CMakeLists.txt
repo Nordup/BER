@@ -6,23 +6,17 @@ project(TestBER)
 
 # poco library
 add_subdirectory(poco)
-# link together
-file(GET_RUNTIME_DEPENDENCIES)
-
-#set(SRC_DIR src/)
-#list(CPP IO.cpp BER.cpp send_and_receiveData.cpp)
+set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_BINARY_DIR}/poco/Poco")
+include(PocoConfig)
 
 # add the executable
 add_executable(server src/Server.cpp src/IO.cpp src/BER.cpp src/send_and_receiveData.cpp)
 add_executable(client src/Client.cpp src/IO.cpp src/BER.cpp src/send_and_receiveData.cpp)
 
-#add_executable(server ${SRC_DIR}Server.cpp ${SRC_DIR}${CPP})
-#add_executable(client ${SRC_DIR}Client.cpp ${SRC_DIR}${CPP})
-
 # include shared library
-find_package(Poco REQUIRED Net Util)
-target_link_libraries(server PUBLIC Poco::Net Poco::Util)
-target_link_libraries(client PUBLIC Poco::Net Poco::Util)
+#find_package(Poco REQUIRED Net)
+target_link_libraries(server PUBLIC Poco::Net)
+target_link_libraries(client PUBLIC Poco::Net)
 # poco in github https://github.com/pocoproject/poco
 
 # include headers
