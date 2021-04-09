@@ -1,4 +1,4 @@
-# TestCXX_BER
+# BER
 Encoding/decoding by standard [BER ANS.1](https://docs.oracle.com/cd/E19476-01/821-0510/def-basic-encoding-rules.html) without implementing a Tag (tag-length-value)
 
 ## Description
